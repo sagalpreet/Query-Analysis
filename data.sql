@@ -37,18 +37,18 @@ as
 $$
 begin
     create table actor (
-    a_id serial primary key,
+    a_id int primary key,
     name char(15)
     );
 
     create table production_company(
-    pc_id serial primary key,
+    pc_id int primary key,
     name char(10),
     address char (30)
     );
 
     create table movie (
-    m_id serial primary key,
+    m_id int primary key,
     name char(10),
     year int check (year >= 1900 and year <= 2000),
     imdb_score numeric(3, 2) check (imdb_score >= 1 and imdb_score <= 5),
@@ -77,27 +77,27 @@ declare
     randint int;
 begin
     for i in 1..300000 loop
-        insert into actor(name) values(random_string(15));
+        insert into actor(a_id, name) values(i, random_string(15));
     end loop;
 
-    raise notice 'Actors: Done!';
+    raise info 'Actors: Done!';
 
     for i in 1..80000 loop
-        insert into production_company(name, address) values(random_string(10), random_string(30));
+        insert into production_company(pc_id, name, address) values(i, random_string(10), random_string(30));
     end loop;
 
-    raise notice 'Production Company: Done!';
+    raise info 'Production Company: Done!';
 
     -- Even & Odd
     for i in 1..1000000 loop
         if random()<0.90 then
-            insert into movie(name, year, imdb_score, pc_id) values(random_string(10), random_int_between(1900, 2000), random_float_between(1, 5), random_int_between(1, 500));
+            insert into movie(m_id, name, year, imdb_score, pc_id) values(i, random_string(10), random_int_between(1900, 2000), random_float_between(1, 5), random_int_between(1, 500));
         else
-            insert into movie(name, year, imdb_score, pc_id) values(random_string(10), random_int_between(1900, 2000), random_float_between(1, 5), random_int_between(501, 80000));
+            insert into movie(m_id, name, year, imdb_score, pc_id) values(i, random_string(10), random_int_between(1900, 2000), random_float_between(1, 5), random_int_between(501, 80000));
         end if;
     end loop;
 
-    raise notice 'Movie: Done!';
+    raise info 'Movie: Done!';
 
     for i in 1..1000000 loop
         randints = '{0,0,0,0}';
@@ -120,6 +120,6 @@ begin
         end loop;
     end loop;
 
-    raise notice 'Casting: Done!';
+    raise info 'Casting: Done!';
 end;
 $$;
