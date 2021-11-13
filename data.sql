@@ -123,3 +123,70 @@ begin
     raise info 'Casting: Done!';
 end;
 $$;
+
+create or replace procedure create_indices()
+language plpgsql
+as
+$$
+begin
+    create index actor_a_id_index on actor using btree (a_id);
+
+    create index movie_m_id_index on movie using btree (m_id);
+    create index movie_imdb_score_index on movie using btree (imdb_score);
+    create index movie_year_index on movie using btree (year);
+    create index movie_pc_id_index on movie using btree (pc_id);
+
+    create index casting_m_id_index on casting using btree (m_id);
+    create index casting_a_id_index on casting using btree (a_id);
+end
+$$;
+
+/*
+Part A
+---------------------------------------------------------------------------
+vacuum analyze;
+
+explain analyze
+select name from movie where imdb_score < 2;
+
+explain analyze
+select name from movie where imdb_score between 1.5 and 4.5;
+
+explain analyze
+select name from movie where year between 1900 and 1990;
+
+explain analyze
+select name from movie where year between 1990 and 1995;
+
+explain analyze
+select * from movie where pc_id < 50;
+
+explain analyze
+select * from movie where pc_id > 20000;
+---------------------------------------------------------------------------
+
+Part B
+---------------------------------------------------------------------------
+vacuum analyze;
+
+explain analyze
+select a.name, m.name
+from actor a, movie m, casting c
+where (a.a_id, m.m_id)=(c.a_id, c.m_id) and a.a_id<50;
+
+explain analyze
+select a.name, c.m_id
+from actor a, casting c
+where a.a_id=c.a_id and c.m_id<50;
+
+explain analyze
+select m.name, p.name
+from movie m, production_company p
+where m.pc_id=p.pc_id and m.imdb_score<1.5;
+
+explain analyze
+select m.name, p.name
+from movie m, production_company p
+where m.pc_id=p.pc_id and m.year between 1950 and 2000;
+---------------------------------------------------------------------------
+*/
